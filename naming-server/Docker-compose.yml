@@ -1,0 +1,120 @@
+version: '3.4'
+
+services:
+# ZIPIKIN -> docker run -p 9411:9411 openzipkin/zipkin 
+  zipkin-server:
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
+    networks:
+      - joselui3-network
+ # MYSQL
+  cambio-db:
+    image: mysql:5.7.22
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      TZ: America/Sao_Paulo
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: admin123
+      MYSQL_DATABASE: cambio_service
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_TCP_PORT: 3308
+    ports:
+      - 3308:3308
+    expose:
+      - 3308
+    networks:
+      - joselui3-network
+  book-db:
+    image: mysql:5.7.22
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      TZ: America/Sao_Paulo
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: admin123
+      MYSQL_DATABASE: book_service
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_TCP_PORT: 3310
+    ports:
+      - 3310:3310
+    expose:
+      - 3310
+    networks:
+      - joselui3-network
+# NAMING-SERVER
+  naming-server:
+    image: joselui3/naming-server:0.0.1-SNAPSHOT
+    ports:
+      - 8761:8761
+    networks:
+      - joselui3-network
+ # API-GATEWAY -> docker run -p 8765:8765 joselui3/api-gateway:0.0.1-SNAPSHOT
+  api-gateway:
+    image: joselui3/api-gateway:0.0.1-SNAPSHOT
+    ports:
+      - 8765:8765
+    depends_on:
+      - naming-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+    networks:
+      - joselui3-network     
+# CAMBIO-SERVICE COM Dockerfile
+  cambio-service:
+    image: joselui3/cambio-service:0.0.1-SNAPSHOT
+    restart: always
+    build: 
+      context: .
+      dockerfile: cambio-service/Dockerfile
+    environment:
+      TZ: America/Sao_Paulo
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      SPRING.APPLICATION.NAME: cambio-service
+      SPRING.DATASOURCE.URL: jdbc:mysql://cambio-db:3308/cambio_service?useSSL=false&serverTimezone=UTC&enableTLSProtocols=TLSv1.2
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: admin123
+      SPRING.FLYWAY.URL: jdbc:mysql://cambio-db:3308/cambio_service?useSSL=false&serverTimezone=UTC&enableTLSProtocols=TLSv1.2
+      SPRING.FLYWAY.USER: root
+      SPRING.FLYWAY.PASSWORD: admin123
+    ports:
+      - 8000:8000
+    depends_on:
+      - naming-server
+      - cambio-db
+    networks:
+      - joselui3-network
+# BOOK-SERVICE COM Dockerfile
+  book-service:
+    image: joselui3/book-service:0.0.1-SNAPSHOT
+    restart: always
+    build: 
+      context: .
+      dockerfile: book-service/Dockerfile
+    environment:
+      TZ: America/Sao_Paulo
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      SPRING.APPLICATION.NAME: book-service
+      SPRING.DATASOURCE.URL: jdbc:mysql://book-db:3310/book_service?useSSL=false&serverTimezone=UTC&enableTLSProtocols=TLSv1.2
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: admin123
+      SPRING.FLYWAY.URL: jdbc:mysql://book-db:3310/book_service?useSSL=false&serverTimezone=UTC&enableTLSProtocols=TLSv1.2
+      SPRING.FLYWAY.USER: root
+      SPRING.FLYWAY.PASSWORD: admin123
+    ports:
+      - 8100:8100
+    depends_on:
+      - naming-server
+      - book-db
+    networks:
+      - joselui3-network
+       
+networks:
+  joselui3-network:
+    driver: bridge

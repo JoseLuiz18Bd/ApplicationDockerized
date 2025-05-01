@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: greeting-service
+# https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - '*'
+greeting-service:
+  greeting: "Hello"
+  default-value: "World!!!"
