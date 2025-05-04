@@ -11,5 +11,13 @@ jobs:
         with:
           username: joselui3
           password: 840318Bd@
-         
-              
+          
+      - name: Setup Java JDK 
+        uses: actions/setup-java@v3.14.1
+        with:
+          java-version: 17
+          distribution: 'adopt'
+
+      - name: Buid Eureka Naming Server Container Image 
+        working-directory: ./ApplicationDockerized/naming-server
+        run: mvn spring-boot:build-image -DskipTests
