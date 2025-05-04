@@ -10,7 +10,7 @@ spring:
     name: cambio-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/cambio-service?useTimezone=true&serverTimezone=UTC
+    url: jdbc:mysql://cambio-db:3308/cambio-service?useTimezone=true&serverTimezone=UTC
     username: root
     password: admin123
   jpa:
@@ -21,15 +21,26 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
   flyway:
-    url: jdbc:mysql://localhost:3306/cambio-service?useTimezone=true&serverTimezone=UTC
+    url: jdbc:mysql://cambio-db:3308/cambio-service?useTimezone=true&serverTimezone=UTC
     user: root
     password: admin123
-springdoc:
-  api-docs:
-    path: cambio-service/v3/api-docs
+  zipkin:
+    base-url: http://zipkin-server:9411
+    sender:
+      type: rabbit
+  rabbitmq:
+    host: rabbit-mq
+    port: 5672
+    username: guest
+    password: guest
+
 management:
   tracing:
     sampling:
       probability: 1.0
-#  zipkin:
-#    base-url: http://localhotst:9411/
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+springdoc:
+  api-docs:
+    path: cambio-service/v3/api-docs
