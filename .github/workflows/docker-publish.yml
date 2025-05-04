@@ -19,5 +19,5 @@ jobs:
           distribution: 'adopt'
 
       - name: Buid Eureka Naming Server Container Image 
-        working-directory: ./naming-server
+        working-directory: D:/CURSOS\CURSO_MICROSERVICOS_SPRING/ApplicationDockerized/naming-server
         run: mvn spring-boot:build-image -DskipTests
