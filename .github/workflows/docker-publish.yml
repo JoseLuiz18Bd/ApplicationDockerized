@@ -38,5 +38,5 @@ jobs:
         run: mvn spring-boot:build-image -DskipTests
 
       - name: Docker Compose Build 
-        working-directory: naming-server
+        working-directory: ApplicationDockerized
         run: docker-compose buid
