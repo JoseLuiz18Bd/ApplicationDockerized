@@ -31,11 +31,11 @@ jobs:
         
       - name: Build Cambio Microservice Container Image 
         working-directory: cambio-service
-        run: mvn spring-boot:build-image -DskipTests
+        run: mvn clean package -DskipTests
         
       - name: Build Book Microservice Container Image 
         working-directory: book-service
-        run: mvn spring-boot:build-image -DskipTests
+        run: mvn clean package -DskipTests
 
       - name: Docker Compose Build 
         working-directory: ./ApplicationDockerized
