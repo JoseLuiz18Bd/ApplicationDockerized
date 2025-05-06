@@ -26,7 +26,8 @@ jobs:
         run: mvn spring-boot:build-image -DskipTests -Dspring.boot.build-info.skip=true
         
       - name: Build API Gateway Container Image 
-        working-directory: .../api-gateway
+        if: ${{ hashFiles('api-gateway/pom.xml') != '' }}
+        working-directory: api-gateway
         run: mvn spring-boot:build-image -DskipTests -Dspring.boot.build-info.skip=true
         
       # - name: Build Cambio Microservice Container Image 
