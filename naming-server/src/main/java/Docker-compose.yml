@@ -87,6 +87,9 @@ services:
   cambio-service:
     image: joselui3/cambio-service:0.0.1-SNAPSHOT
     restart: always
+    build: 
+      context: .
+      dockerfile: cambio-service/Dockerfile
     environment:
       TZ: America/Sao_Paulo
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
@@ -94,6 +97,7 @@ services:
       ZIPKIN_RABBITMQ_ADDRESSES: rabbit-mq:5672
       RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
       SPRING_RABBITMQ_HOST: rabbit-mq
+#      SPRING_ZIPKIN_SENDER_TYPE: rabbit
       SPRING_ZIPKIN.SENDER.TYPE: rabbit
       SPRING.APPLICATION.NAME: cambio-service
       SPRING.DATASOURCE.URL: jdbc:mysql://cambio-db:3308/cambio_service?useSSL=false&serverTimezone=UTC&enableTLSProtocols=TLSv1.2
@@ -110,40 +114,13 @@ services:
       - rabbit-mq
     networks:
       - joselui3-network
-#  cambio-service:
-#    image: joselui3/cambio-service:0.0.1-SNAPSHOT
-#    restart: always
-#    build: 
-#      context: .
-#      dockerfile: cambio-service/Dockerfile
-#    environment:
-#      TZ: America/Sao_Paulo
-#      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
-#      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
-#      ZIPKIN_RABBITMQ_ADDRESSES: rabbit-mq:5672
-#      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
-#      SPRING_RABBITMQ_HOST: rabbit-mq
-##      SPRING_ZIPKIN_SENDER_TYPE: rabbit
-#      SPRING_ZIPKIN.SENDER.TYPE: rabbit
-#      SPRING.APPLICATION.NAME: cambio-service
-#      SPRING.DATASOURCE.URL: jdbc:mysql://cambio-db:3308/cambio_service?useSSL=false&serverTimezone=UTC&enableTLSProtocols=TLSv1.2
-#      SPRING.DATASOURCE.USERNAME: root
-#      SPRING.DATASOURCE.PASSWORD: admin123
-#      SPRING.FLYWAY.URL: jdbc:mysql://cambio-db:3308/cambio_service?useSSL=false&serverTimezone=UTC&enableTLSProtocols=TLSv1.2
-#      SPRING.FLYWAY.USER: root
-#      SPRING.FLYWAY.PASSWORD: admin123
-#    ports:
-#      - 8000:8000
-#    depends_on:
-#      - naming-server
-#      - cambio-db
-#      - rabbit-mq
-#    networks:
-#      - joselui3-network
 # BOOK-SERVICE COM Dockerfile
   book-service:
     image: joselui3/book-service:0.0.1-SNAPSHOT
     restart: always
+    build: 
+      context: .
+      dockerfile: book-service/Dockerfile
     environment:
       TZ: America/Sao_Paulo
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
@@ -151,6 +128,7 @@ services:
       ZIPKIN_RABBITMQ_ADDRESSES: rabbit-mq:5672
       RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
       SPRING_RABBITMQ_HOST: rabbit-mq
+#      SPRING_ZIPKIN_SENDER_TYPE: rabbit
       SPRING_ZIPKIN.SENDER.TYPE: rabbit
       SPRING.APPLICATION.NAME: book-service
       SPRING.DATASOURCE.URL: jdbc:mysql://book-db:3310/book_service?useSSL=false&serverTimezone=UTC&enableTLSProtocols=TLSv1.2
@@ -167,37 +145,7 @@ services:
       - rabbit-mq
     networks:
       - joselui3-network
-#  book-service:
-#    image: joselui3/book-service:0.0.1-SNAPSHOT
-#    restart: always
-#    build: 
-#      context: .
-#      dockerfile: book-service/Dockerfile
-#    environment:
-#      TZ: America/Sao_Paulo
-#      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
-#      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
-#      ZIPKIN_RABBITMQ_ADDRESSES: rabbit-mq:5672
-#      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
-#      SPRING_RABBITMQ_HOST: rabbit-mq
-##      SPRING_ZIPKIN_SENDER_TYPE: rabbit
-#      SPRING_ZIPKIN.SENDER.TYPE: rabbit
-#      SPRING.APPLICATION.NAME: book-service
-#      SPRING.DATASOURCE.URL: jdbc:mysql://book-db:3310/book_service?useSSL=false&serverTimezone=UTC&enableTLSProtocols=TLSv1.2
-#      SPRING.DATASOURCE.USERNAME: root
-#      SPRING.DATASOURCE.PASSWORD: admin123
-#      SPRING.FLYWAY.URL: jdbc:mysql://book-db:3310/book_service?useSSL=false&serverTimezone=UTC&enableTLSProtocols=TLSv1.2
-#      SPRING.FLYWAY.USER: root
-#      SPRING.FLYWAY.PASSWORD: admin123
-#    ports:
-#      - 8100:8100
-#    depends_on:
-#      - naming-server
-#      - book-db
-#      - rabbit-mq
-#    networks:
-#      - joselui3-network
-#       
+       
 networks:
   joselui3-network:
     driver: bridge
