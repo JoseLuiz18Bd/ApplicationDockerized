@@ -1,72 +1,33 @@
 name: Continuous Integration with GitHub
 
-on:
-  push:
-    branches:
-      - main  # Só executa na branch main (pode ajustar conforme seu fluxo)
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout source code (full)
+      - name: Checkout source code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Clona o histórico completo para evitar falhas com plugins que usam git
-
-      - name: Set up Java 17 (AdoptOpenJDK)
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: 'adopt'
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.4.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Eureka Naming Server Container Image
+      - name: Setup Java JDK 
+        uses: actions/setup-java@v3.14.1
+        with:
+          java-version: 17
+          distribution: 'adopt'
+
+      - name: Build Eureka Naming Server Container Image 
         working-directory: naming-server
-        run: mvn spring-boot:build-image -DskipTests -Dspring.boot.build-info.skip=true
-
-      - name: Build API Gateway Container Image
-        working-directory: api-gateway
-        run: mvn spring-boot:build-image -DskipTests -Dspring.boot.build-info.skip=true
-
-
-
-# name: Continuous Integration with GitHub
-
-# on: [push]
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout source code
-#         uses: actions/checkout@v3
-
-#       - name: Log in to Docker Hub
-#         uses: docker/login-action@v3.4.0
-#         with:
-#           username: ${{ secrets.DOCKER_USERNAME }}
-#           password: ${{ secrets.DOCKER_PASSWORD }}
-
-#       - name: Setup Java JDK 
-#         uses: actions/setup-java@v3.14.1
-#         with:
-#           java-version: 17
-#           distribution: 'adopt'
-
-#       - name: Build Eureka Naming Server Container Image 
-#         working-directory: naming-server
-#         run: mvn spring-boot:build-image -DskipTests
+        run: mvn spring-boot:build-image -DskipTests
         
-#       - name: Build API Gateway Container Image 
-#         working-directory: api-gateway
-#         run: mvn spring-boot:build-image -DskipTests
+      - name: Build API Gateway Container Image 
+        working-directory: api-gateway
+        run: mvn spring-boot:build-image -DskipTests
         
       # - name: Build Cambio Microservice Container Image 
       #   working-directory: cambio-service
