@@ -39,4 +39,4 @@ jobs:
 
       - name: Docker Compose Build 
         working-directory: ./ApplicationDockerized
-        run: docker-compose buid
+        run: docker-compose build
